@@ -27,5 +27,4 @@ yarn-error.log*
 
 # vscode debug logs
 debug.log
-__*
-.next/*
+app.log

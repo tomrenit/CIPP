@@ -14,6 +14,7 @@ import { useSettings } from "../hooks/use-settings";
 export const SideNavItem = (props) => {
   const {
     active = false,
+    category = "",
     children,
     collapse = false,
     depth = 0,
@@ -29,10 +30,10 @@ export const SideNavItem = (props) => {
 
   const [open, setOpen] = useState(openImmediately);
   const [hovered, setHovered] = useState(false);
-  const { bookmarks, setBookmarks } = useUserBookmarks();
+  const { isBookmarked: isPathBookmarked, toggleBookmark } = useUserBookmarks();
   const settings = useSettings();
   const compactNav = settings.compactNav ?? false;
-  const isBookmarked = bookmarks.some((bookmark) => bookmark.path === path);
+  const isBookmarked = isPathBookmarked(path);
 
   const handleToggle = useCallback(() => {
     setOpen((prevOpen) => !prevOpen);
@@ -41,15 +42,9 @@ export const SideNavItem = (props) => {
   const handleBookmarkToggle = useCallback(
     (event) => {
       event.stopPropagation();
-      setBookmarks(
-        isBookmarked
-          ? bookmarks.filter((bookmark) => bookmark.path !== path)
-          : bookmarks.length >= 50
-            ? bookmarks
-            : [...bookmarks, { label: title, path }]
-      );
+      toggleBookmark({ label: title, path, category: category || "" });
     },
-    [isBookmarked, bookmarks, setBookmarks, path, title]
+    [toggleBookmark, path, title, category]
   );
 
   // Dynamic spacing and font sizing based on depth
